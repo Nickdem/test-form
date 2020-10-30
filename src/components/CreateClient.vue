@@ -2,156 +2,91 @@
   <form @submit.prevent="submitHandler">
     <h1>Регистрация клиента</h1>
     <div class="input-group" v-show="counter === 0">
-      <h2>Заполните данные</h2>
-      <div class="input-field">
-        <small class="helper-text" v-if="$v.obj1.surname.$dirty && !$v.obj1.surname.required">Поле не должно быть пустым</small>
-        <input
-          id="surname"
-          type="text"
-          v-model.trim="obj1.surname"
-          class="input"
-          :class="{'invalid': $v.obj1.surname.$dirty && !$v.obj1.surname.required}"
+
+      <h2>Общие данные</h2>
+
+      <div 
+        v-for="person of personInputs" 
+        :key="person.id" 
+        class="input-field"
+      >
+        <small 
+          class="helper-text" 
+          v-if="(person.req && ($v.obj1[person.id].$dirty && !$v.obj1[person.id].required)) 
+            || (person.minimumLength && ($v.obj1[person.id].$dirty && !$v.obj1[person.id].minLength))"
         >
-        <label for="surname">Фамилия{{$v.obj1.surname ? '*' : ''}}:</label>
-      </div>
-      <div class="input-field">
-        <small class="helper-text" v-if="$v.obj1.name.$dirty && !$v.obj1.name.required">Поле не должно быть пустым</small>
+          {{
+            person.minimumLength && !$v.obj1[person.id].minLength 
+            ? 'Длина номера ' + (obj1[person.id].length || '1') + ' из ' + $v.obj1[person.id].$params.minLength.min 
+            : 'Поле не должно быть пустым'
+          }}
+        </small>
         <input
-          id="name"
-          type="text"
-          v-model.trim="obj1.name"
+          :id="person.id"
+          :type="person.type"
+          v-model="obj1[person.id]"
           class="input"
-          :class="{'invalid': $v.obj1.name.$dirty && !$v.obj1.name.required}"
+          :class="{'invalid': (person.req && ($v.obj1[person.id].$dirty && !$v.obj1[person.id].required)) 
+            || (person.minimumLength && ($v.obj1[person.id].$dirty && !$v.obj1[person.id].minLength))}"
         >
-        <label for="name">Имя{{$v.obj1.name ? '*' : ''}}:</label>
-      </div>
-      <div class="input-field">
-        <input
-          id="patronymic"
-          type="text"
-          v-model.trim="obj1.patronymic"
-          class="input"
+        <label 
+          :for="person.id"
         >
-        <label for="patronymic">Отчество:</label>
+          {{person.name}}{{person.req ? '*' : ''}}:
+        </label>
       </div>
-      <div class="input-field">
-        <small class="helper-text" v-if="$v.obj1.dob.$dirty && !$v.obj1.dob.required">Поле не должно быть пустым</small>
-        <input
-          id="dob"
-          type="date"
-          v-model="obj1.dob"
-          class="input"
-          :class="{'invalid': $v.obj1.dob.$dirty && !$v.obj1.dob.required}"
-        >
-        <label for="dob">Дата рождения{{$v.obj1.dob ? '*' : ''}}:</label>
-      </div>
-      <div class="input-field">
-        <small class="helper-text" v-if="$v.obj1.phone.$dirty && !$v.obj1.phone.required">Поле не должно быть пустым</small>
-        <small class="helper-text invalid" v-else-if="$v.obj1.phone.$dirty && !$v.obj1.phone.minLength">Длина номера {{obj1.phone.length || '1'}} из {{$v.obj1.phone.$params.minLength.min}}</small>
-        <input
-          id="phone"
-          type="tel"
-          v-model.trim="obj1.phone"
-          class="input"
-          :class="{'invalid': ($v.obj1.phone.$dirty && !$v.obj1.phone.required) || ($v.obj1.phone.$dirty && !$v.obj1.phone.minLength)}"
-        >
-        <label for="phone">Телефон{{$v.obj1.phone ? '*' : ''}}:</label>
-      </div>
-      <div class="input-field">
-        <input
-          id="gender"
-          type="text"
-          v-model.trim="obj1.gender"
-          class="input"
-        >
-        <label for="gender">Пол:</label>
-      </div>
-      <div class="input-field">
-        <small class="helper-text" v-if="$v.obj1.group.$dirty && ($v.obj1.group.$model[0] === '')">Поле не должно быть пустым</small>
+      
+
+      <div v-for="sel of personSelectors" :key="sel.id" class="input-field">
+        <small class="helper-text" v-if="sel.req && ($v.obj1[sel.id].$dirty && !$v.obj1[sel.id].required)">Поле не должно быть пустым</small>
         <select 
-          v-model="obj1.group" 
-          id="group" 
-          multiple size="3"
+          v-model="obj1[sel.id]" 
+          :id="sel.id" 
+          :multiple="sel.multiple && 'multiple'"
+          :size="sel.multiple && sel.options.length"
           class="select"
-          :class="{'invalid': $v.obj1.group.$dirty && ($v.obj1.group.$model[0] === '')}"
+          :class="{'invalid': sel.req && ($v.obj1[sel.id].$dirty && !$v.obj1[sel.id].required)}"
         >
-          <option>VIP</option>
-          <option>Проблемные</option>
-          <option>ОМС</option>
+          <option v-for="opt of sel.options" :key="opt">{{opt}}</option>
         </select>
-        <label for="group">Группа клиентов{{$v.obj1.group ? '*' : ''}}:</label>
+        <label for="group">{{sel.name}}{{sel.req ? '*' : ''}}:</label>
       </div>
-      <div class="input-field">
-        <select v-model="obj1.doctor" id="doctor" class="select">
-          <option>Иванов</option>
-          <option>Захаров</option>
-          <option>Чернышева</option>
-        </select>
-        <label for="doctor">Лечащий врач:</label>
-      </div>
+
       <div class="input-field input-field--checkbox">
         <input v-model="obj1.withoutSms" type="checkbox" id="sms">
         <label for="sms">Не отправлять СМС</label>
       </div>
     </div>
+
     <div class="input-group" v-show="counter === 1">
+
       <h2>Адрес</h2>
-      <div class="input-field">
-        <input
-          id="index"
-          type="text"
-          v-model.trim="obj2.index"
-          class="input"
+      
+      <div 
+        v-for="address of addressInputs" 
+        :key="address.id" 
+        class="input-field"
+      >
+        <small 
+          class="helper-text" 
+          v-if="address.req && ($v.obj2[address.id].$dirty && !$v.obj2[address.id].required)"
         >
-        <label for="index">Индекс:</label>
-      </div>
-      <div class="input-field">
+          Поле не должно быть пустым
+        </small>
         <input
-          id="country"
+          :id="address.id"
           type="text"
-          v-model.trim="obj2.country"
+          v-model="obj2[address.id]"
           class="input"
+          :class="{'invalid': address.req && $v.obj2[address.id].$dirty && !$v.obj2[address.id].required}"
         >
-        <label for="country">Страна:</label>
-      </div>
-      <div class="input-field">
-        <input
-          id="region"
-          type="text"
-          v-model.trim="obj2.region"
-          class="input"
+        <label 
+          :for="address.id"
         >
-        <label for="region">Область:</label>
+          {{address.name}}{{address.req ? '*' : ''}}:
+        </label>
       </div>
-      <div class="input-field">
-        <small class="helper-text" v-if="$v.obj2.city.$dirty && !$v.obj2.city.required">Поле не должно быть пустым</small>
-        <input
-          id="city"
-          type="text"
-          v-model.trim="obj2.city"
-          class="input"
-          :class="{'invalid': $v.obj2.city.$dirty && !$v.obj2.city.required}"
-        >
-        <label for="city">Город{{$v.obj2.city ? '*' : ''}}:</label>
-      </div>
-      <div class="input-field">
-        <input
-          id="street"
-          type="text"
-          v-model.trim="obj2.street"
-          class="input"
-        >
-        <label for="street">Улица:</label>
-      </div>
-      <div class="input-field">
-        <input
-          id="house"
-          type="text"
-          v-model.trim="obj2.house"
-          class="input"
-        >
-        <label for="house">Дом:</label>
-      </div>
+
     </div>
     <div class="input-group" v-show="counter === 2">
       <h2>Паспорт</h2>
@@ -222,7 +157,28 @@ import {required, minLength} from 'vuelidate/lib/validators'
 export default {
   name: 'create-client',
   data: () => ({
+    yes: false,
     counter: 0,
+    addressInputs: [
+      {name: 'Индекс', id: 'index', req: false},
+      {name: 'Страна', id: 'country', req: false},
+      {name: 'Область', id: 'region', req: false},
+      {name: 'Город', id: 'city', req: true},
+      {name: 'Улица', id: 'street', req: false},
+      {name: 'Дом', id: 'house', req: false}
+    ],
+    personInputs: [
+      {name: 'Фамилия', id: 'surname', type: 'text', req: true, minimumLength: false},
+      {name: 'Имя', id: 'name', type: 'text', req: true, minimumLength: false},
+      {name: 'Отчество', id: 'patronymic', type: 'text', req: false, minimumLength: false},
+      {name: 'Дата рождения', id: 'dob', type: 'date', req: true, minimumLength: false},
+      {name: 'Номер телефона', id: 'phone', type: 'tel', req: true, minimumLength: true},
+      {name: 'Пол', id: 'gender', type: 'text', req: false, minimumLength: false}
+    ],
+    personSelectors: [
+      {name: 'Группа клиентов', id: 'group', type: 'select', options: ['VIP', 'Проблемные', 'ОМС'], multiple: true, req: true, minimumLength: false},
+      {name: 'Лечащий врач', id: 'doctor', type: 'select', options: ['Иванов', 'Захаров', 'Чернышева'], multiple: false, req: false, minimumLength: false}
+    ],
     obj1: {
       surname: '',
       name: '',
@@ -230,7 +186,7 @@ export default {
       dob: '',
       phone: 7,
       gender: '',
-      group: [''],
+      group: [],
       doctor: '',
       withoutSms: true
     },
@@ -268,14 +224,15 @@ export default {
   },
   methods: {
     async submitHandler () {
+      console.log(this.$v)
       if (this.$v.$invalid) {
+        
         this.$v.$touch()
         return
       }
 
       const formData = {
         ...this.obj1,
-        group: this.obj1.group[0],
         ...this.obj2,
         ...this.obj3,
       }
