@@ -45,6 +45,6 @@ $helper-indents: 40px
     padding: 3rem
 
     p 
-      font-size: 36px
+      font-size: 32px
 
 </style>

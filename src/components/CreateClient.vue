@@ -23,6 +23,7 @@
 
         <select 
           class="select"
+          @blur="person.req && $v.obj1[person.id].$touch()"
           v-if="person.type === 'select'"
           v-model="obj1[person.id]" 
           :id="person.id" 
@@ -36,6 +37,7 @@
         <template v-else>
           <input
             class="input"
+            @blur="(person.req || person.minimumLength) && $v.obj1[person.id].$touch()"
             :id="person.id"
             :type="person.type"
             v-model="obj1[person.id]"
@@ -77,6 +79,7 @@
           type="text"
           v-model="obj2[address.id]"
           class="input"
+          @blur="address.req && $v.obj2[address.id].$touch()"
           :class="{'invalid': address.req && $v.obj2[address.id].$dirty && !$v.obj2[address.id].required}"
         >
 
@@ -104,6 +107,7 @@
 
         <select 
           class="select"
+          @blur="pass.req && $v.obj3[pass.id].$touch()"
           v-if="pass.type === 'select'"
           v-model="obj3[pass.id]" 
           :id="pass.id" 
@@ -115,6 +119,7 @@
         <template v-else>
           <input
             class="input"
+            @blur="pass.req && $v.obj3[pass.id].$touch()"
             :id="pass.id"
             type="text"
             v-model="obj3[pass.id]"
@@ -129,6 +134,7 @@
         </label>
       </div>
     </div>
+    
     <div class="button-group">
       <div class="button-group--pagination">
         <button type="button" v-if="counter > 0" @click="counter--">предыдущая</button>
@@ -141,6 +147,7 @@
 
 <script>
 import mixin from '@/mixins/createMixin'
+
 export default {
   name: 'create-client',
   mixins: [mixin]
