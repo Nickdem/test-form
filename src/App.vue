@@ -1,10 +1,10 @@
 <template>
   <main>
     <CreateClient @helper="helperShow" />
-    <button class="helper-btn" @click="helperShow('Обязательные поля обозначены - *')">
+    <button v-if="!showHelper" class="helper-btn" @click="helperShow('Обязательные поля обозначены - *')">
       ?
     </button>
-    <Helper v-if="showHelper" :text="textHelper" @closed="helperShow" />
+    <Helper v-if="showHelper" :show="showHelper" :text="textHelper" @closed="helperShow" />
   </main>
 </template>
 
@@ -31,7 +31,8 @@ export default {
 </script>
 
 <style lang="sass">
-$helper-indents: 40px
+$mob-helper-indents: 10px
+$main-helper-indents: 40px
 
 body 
   margin: 10px
@@ -40,11 +41,11 @@ body
 
 .helper-btn
   position: fixed
-  top: $helper-indents
-  right: $helper-indents
-  font-size: 24px
-  width: 70px
-  height: 70px
+  top: $mob-helper-indents
+  right: $mob-helper-indents
+  font-size: 14px
+  width: 40px
+  height: 40px
   border-radius: 50%
   background-color: #08acad
   color: #ffffff
@@ -55,6 +56,10 @@ body
   
   .helper-btn
     top: auto
-    bottom: $helper-indents
+    right: $main-helper-indents
+    bottom: $main-helper-indents
+    width: 70px
+    height: 70px
+    font-size: 24px
     
 </style>

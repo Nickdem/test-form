@@ -1,5 +1,5 @@
 <template>
-  <div class="helper">
+  <div class="helper" :class="{'slideLeft': !showHelper}">
     <p>{{text}}</p>
     <button @click="$emit('closed')">Закрыть</button>
   </div>
@@ -10,6 +10,9 @@ export default {
   props: {
     text: {
       type: String
+    },
+    show: {
+      type: Boolean
     }
   }
 }
@@ -37,6 +40,33 @@ $helper-indents: 40px
     border: none
     color: #d73c42
     cursor: pointer
+      
+.slideLeft
+  animation-name: slideLeft
+  animation-duration: 1.5s 
+  animation-timing-function: ease-in-out 
+  visibility: visible !important
+
+@keyframes slideLeft 
+  0% 
+    transform: translateX(100%)
+  
+  50%
+    transform: translateX(-8%)
+  
+  65%
+    transform: translateX(4%)
+  
+  80%
+    transform: translateX(-4%)
+  
+  95%
+    transform: translateX(2%)
+            
+  100% 
+    transform: translateX(0%)
+    
+
 
 @media screen and (min-width: 767px)
   .helper

@@ -3,32 +3,35 @@ import {required, minLength} from 'vuelidate/lib/validators'
 const mixin = {
   data: () => ({
     counter: 0,
-    addressInputs: [
-      {name: 'Индекс', id: 'index', req: false},
-      {name: 'Страна', id: 'country', req: false},
-      {name: 'Область', id: 'region', req: false},
-      {name: 'Город', id: 'city', req: true},
-      {name: 'Улица', id: 'street', req: false},
-      {name: 'Дом', id: 'house', req: false}
+    inputsArray: [
+      {title: 'Общие данные', fields: [
+        {name: 'Фамилия', id: 'surname', type: 'text', req: true, minimumLength: false},
+        {name: 'Имя', id: 'name', type: 'text', req: true, minimumLength: false},
+        {name: 'Отчество', id: 'patronymic', type: 'text', req: false, minimumLength: false},
+        {name: 'Дата рождения', id: 'dob', type: 'date', req: true, minimumLength: false},
+        {name: 'Номер телефона', id: 'phone', type: 'tel', req: true, minimumLength: true},
+        {name: 'Пол', id: 'gender', type: 'text', req: false, minimumLength: false},
+        {name: 'Группа клиентов', id: 'group', type: 'select', options: ['VIP', 'Проблемные', 'ОМС'], multiple: true, req: true, minimumLength: false},
+        {name: 'Лечащий врач', id: 'doctor', type: 'select', options: ['Иванов', 'Захаров', 'Чернышева'], multiple: false, req: false, minimumLength: false},
+        {name: 'Не отправлять СМС', id: 'withoutSms', type: 'checkbox'}
+      ]},
+      {title: 'Адрес', fields: [
+        {name: 'Индекс', id: 'index', type: 'text', req: false},
+        {name: 'Страна', id: 'country', type: 'text', req: false},
+        {name: 'Область', id: 'region', type: 'text', req: false},
+        {name: 'Город', id: 'city', type: 'text', req: true},
+        {name: 'Улица', id: 'street', type: 'text', req: false},
+        {name: 'Дом', id: 'house', type: 'text', req: false}
+      ]},
+      {title: 'Паспорт', fields: [
+        {name: 'Тип документа', id: 'docType', type: 'select', options: ['Паспорт', 'Свидетельство о рождении', 'Вод. удостоверение'], req: true},
+        {name: 'Серия', id: 'series', type: 'text', req: false},
+        {name: 'Номер', id: 'number', type: 'text', req: false},
+        {name: 'Кем выдан', id: 'issued', type: 'text', req: false},
+        {name: 'Дата выдачи', id: 'doi', type: 'text', req: true}
+      ]}
     ],
-    personInputs: [
-      {name: 'Фамилия', id: 'surname', type: 'text', req: true, minimumLength: false},
-      {name: 'Имя', id: 'name', type: 'text', req: true, minimumLength: false},
-      {name: 'Отчество', id: 'patronymic', type: 'text', req: false, minimumLength: false},
-      {name: 'Дата рождения', id: 'dob', type: 'date', req: true, minimumLength: false},
-      {name: 'Номер телефона', id: 'phone', type: 'tel', req: true, minimumLength: true},
-      {name: 'Пол', id: 'gender', type: 'text', req: false, minimumLength: false},
-      {name: 'Группа клиентов', id: 'group', type: 'select', options: ['VIP', 'Проблемные', 'ОМС'], multiple: true, req: true, minimumLength: false},
-      {name: 'Лечащий врач', id: 'doctor', type: 'select', options: ['Иванов', 'Захаров', 'Чернышева'], multiple: false, req: false, minimumLength: false}
-    ],
-    passInputs: [
-      {name: 'Тип документа', id: 'docType', type: 'select', options: ['Паспорт', 'Свидетельство о рождении', 'Вод. удостоверение'], req: true},
-      {name: 'Серия', id: 'series', req: false},
-      {name: 'Номер', id: 'number', req: false},
-      {name: 'Кем выдан', id: 'issued', req: false},
-      {name: 'Дата выдачи', id: 'doi', req: true}
-    ],
-    obj1: {
+    obj: {
       surname: '',
       name: '',
       patronymic: '',
@@ -37,17 +40,13 @@ const mixin = {
       gender: '',
       group: [],
       doctor: '',
-      withoutSms: true
-    },
-    obj2: {
+      withoutSms: true,
       index: '',
       country: '',
       region: '',
       city: '',
       street: '',
-      house: ''
-    },
-    obj3: {
+      house: '',
       docType: '',
       series: '',
       number: '',
@@ -56,17 +55,13 @@ const mixin = {
     }
   }),
   validations: {
-    obj1: {
+    obj: {
       surname: {required},
       name: {required},
       dob: {required},
       phone: {required, minLength: minLength(11)},
-      group: {required}
-    },
-    obj2: {
-      city: {required}
-    },
-    obj3: {
+      group: {required},
+      city: {required},
       docType: {required},
       doi: {required}
     }
@@ -82,24 +77,21 @@ const mixin = {
       }
 
       const formData = {
-          ...this.obj1,
-          ...this.obj2,
-          ...this.obj3,
+          ...this.obj
       }
 
       console.log(formData)
       this.$emit('helper', 'Поздравляем, вы успешно зарегестрировались!')
       this.$v.$reset()
 
-      this.obj1.surname = this.obj1.name = this.obj1.patronymic = this.obj1.dob = this.obj1.dob = this.obj1.gender = this.obj1.doctor =  ''
+      this.obj.surname = this.obj.name = this.obj.patronymic = this.obj.dob = this.obj.dob = this.obj.gender = this.obj.doctor =  ''
+      this.obj.phone = 7
+      this.obj.group = []
+      this.obj.withoutSms = true
+      this.obj.index = this.obj.country = this.obj.region = this.obj.city = this.obj.street = this.obj.house = ''
+      this.obj.docType = this.obj.series = this.obj.number = this.obj.issued = this.obj.doi = ''
 
-      this.obj1.phone = 7
-      this.obj1.group = []
-      this.obj1.withoutSms = true
-
-      this.obj2.index = this.obj2.country = this.obj2.region = this.obj2.city = this.obj2.street = this.obj2.house = ''
-
-      this.obj3.docType = this.obj3.series = this.obj3.number = this.obj3.issued = this.obj3.doi = ''
+      this.counter = 0
     }
   }
 }

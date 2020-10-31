@@ -1,144 +1,81 @@
 <template>
   <form @submit.prevent="submitHandler">
     <h1>Регистрация клиента</h1>
-    <div class="input-group" v-show="counter === 0">
-      <h2>Общие данные</h2>
+
+    <div class="input-group" v-for="(item, idx) of inputsArray" :key="item.title" v-show="counter === idx">
+      <h2>{{item.title}}</h2>
 
       <div 
         class="input-field"
-        v-for="person of personInputs" 
+        v-for="person of item.fields" 
         :key="person.id" 
+        :class="{'input-field--checkbox': person.type === 'checkbox'}"
       >
         <small 
           class="helper-text" 
-          v-if="(person.req && ($v.obj1[person.id].$dirty && !$v.obj1[person.id].required)) 
-            || (person.minimumLength && ($v.obj1[person.id].$dirty && !$v.obj1[person.id].minLength))"
+          v-if="(person.req && ($v.obj[person.id].$dirty && !$v.obj[person.id].required)) 
+            || (person.minimumLength && ($v.obj[person.id].$dirty && !$v.obj[person.id].minLength))"
         >
           {{
-            person.minimumLength && !$v.obj1[person.id].minLength 
-            ? 'Длина номера ' + (obj1[person.id].length || '1') + ' из ' + $v.obj1[person.id].$params.minLength.min 
+            person.minimumLength && !$v.obj[person.id].minLength 
+            ? 'Длина номера ' + (obj[person.id].length || '1') + ' из ' + $v.obj[person.id].$params.minLength.min 
             : 'Поле не должно быть пустым'
           }}
         </small>
 
         <select 
           class="select"
-          @blur="person.req && $v.obj1[person.id].$touch()"
+          @blur="person.req && $v.obj[person.id].$touch()"
           v-if="person.type === 'select'"
-          v-model="obj1[person.id]" 
+          v-model="obj[person.id]" 
           :id="person.id" 
           :multiple="person.multiple && 'multiple'"
           :size="person.multiple && person.options.length"
-          :class="{'invalid': person.req && ($v.obj1[person.id].$dirty && !$v.obj1[person.id].required)}"
+          :class="{'invalid': person.req && ($v.obj[person.id].$dirty && !$v.obj[person.id].required)}"
         >
           <option v-for="opt of person.options" :key="opt">{{opt}}</option>
         </select>
 
+        <template v-else-if="person.type === 'checkbox'">
+          <input v-model="obj[person.id]" type="checkbox" :id="person.id">
+        </template>
+
         <template v-else>
           <input
             class="input"
-            @blur="(person.req || person.minimumLength) && $v.obj1[person.id].$touch()"
+            @blur="(person.req || person.minimumLength) && $v.obj[person.id].$touch()"
             :id="person.id"
             :type="person.type"
-            v-model="obj1[person.id]"
-            :class="{'invalid': (person.req && ($v.obj1[person.id].$dirty && !$v.obj1[person.id].required)) 
-              || (person.minimumLength && ($v.obj1[person.id].$dirty && !$v.obj1[person.id].minLength))}"
+            v-model="obj[person.id]"
+            :class="{'invalid': (person.req && ($v.obj[person.id].$dirty && !$v.obj[person.id].required)) 
+              || (person.minimumLength && ($v.obj[person.id].$dirty && !$v.obj[person.id].minLength))}"
           >
         </template>
         
         <label 
           :for="person.id"
         >
-          {{person.name}}{{person.req ? '*' : ''}}:
-        </label>
-      </div>
-      
-      <div class="input-field input-field--checkbox">
-        <input v-model="obj1.withoutSms" type="checkbox" id="sms">
-        <label for="sms">Не отправлять СМС</label>
-      </div>
-    </div>
-
-    <div class="input-group" v-show="counter === 1">
-      <h2>Адрес</h2>
-      
-      <div 
-        v-for="address of addressInputs" 
-        :key="address.id" 
-        class="input-field"
-      >
-        <small 
-          class="helper-text" 
-          v-if="address.req && ($v.obj2[address.id].$dirty && !$v.obj2[address.id].required)"
-        >
-          Поле не должно быть пустым
-        </small>
-
-        <input
-          :id="address.id"
-          type="text"
-          v-model="obj2[address.id]"
-          class="input"
-          @blur="address.req && $v.obj2[address.id].$touch()"
-          :class="{'invalid': address.req && $v.obj2[address.id].$dirty && !$v.obj2[address.id].required}"
-        >
-
-        <label 
-          :for="address.id"
-        >
-          {{address.name}}{{address.req ? '*' : ''}}:
-        </label>
-      </div>
-
-    </div>
-    <div class="input-group" v-show="counter === 2">
-      <h2>Паспорт</h2>
-      <div 
-        class="input-field"
-        v-for="pass of passInputs" 
-        :key="pass.id" 
-      >
-        <small 
-          class="helper-text" 
-          v-if="pass.req && ($v.obj3[pass.id].$dirty && !$v.obj3[pass.id].required)"
-        >
-          Поле не должно быть пустым
-        </small>
-
-        <select 
-          class="select"
-          @blur="pass.req && $v.obj3[pass.id].$touch()"
-          v-if="pass.type === 'select'"
-          v-model="obj3[pass.id]" 
-          :id="pass.id" 
-          :class="{'invalid': pass.req && ($v.obj3[pass.id].$dirty && !$v.obj3[pass.id].required)}"
-        >
-          <option v-for="opt of pass.options" :key="opt">{{opt}}</option>
-        </select>
-
-        <template v-else>
-          <input
-            class="input"
-            @blur="pass.req && $v.obj3[pass.id].$touch()"
-            :id="pass.id"
-            type="text"
-            v-model="obj3[pass.id]"
-            :class="{'invalid': pass.req && ($v.obj3[pass.id].$dirty && !$v.obj3[pass.id].required)}"
-          >
-        </template>
-        
-        <label 
-          :for="pass.id"
-        >
-          {{pass.name}}{{pass.req ? '*' : ''}}:
+          {{person.name}}{{person.req ? '*' : ''}}
         </label>
       </div>
     </div>
-    
+
     <div class="button-group">
       <div class="button-group--pagination">
-        <button type="button" v-if="counter > 0" @click="counter--">предыдущая</button>
-        <button type="button" v-if="counter === 0 || counter !== 2" @click="counter++">следующая</button>
+        <button 
+          type="button" 
+          v-if="counter > 0" 
+          @click="counter--"
+        >
+          Назад
+        </button>
+        <button 
+          type="button" 
+          v-if="counter === 0 || counter !== 2" 
+          @click="counter++"
+        >
+          Далее
+        </button>
       </div>
       <button type="submit">отправить</button>
     </div>
@@ -191,13 +128,6 @@ form
     animation-fill-mode: forwards
     animation-delay: .25s
 
-    @keyframes show
-      0%
-        opacity: .3
-      
-      100% 
-        opacity: 1
-
     label
       color: $dark-color
 
@@ -213,21 +143,38 @@ form
 
     .invalid
       border-color: $error-color
+      opacity: 0
+      transition: .25s
+      animation: show .5s 1
+      animation-fill-mode: forwards
+      animation-delay: .25s
 
     .helper-text
       font-size: 16px
       color: $error-color
+      opacity: 0
+      transition: .25s
+      animation: show .5s 1
+      animation-fill-mode: forwards
+      animation-delay: .25s
 
   .input-field--checkbox
     display: block
 
     input
-      width: 18px
-      height: 18px
+      width: 16px
+      height: 16px
       margin-right: 1rem
     
     label
       color: $dark-color
+
+@keyframes show
+  0%
+    opacity: .3
+  
+  100% 
+    opacity: 1
 
 .button-group
   display: flex
@@ -258,6 +205,9 @@ form
     .input-group
       margin: 0 2rem
 
+      label
+        font-size: 18px
+
     .button-group
       margin: 0 2rem
       
@@ -267,6 +217,4 @@ form
       
       button[type="button"]
         font-size: 24px
-
-
 </style>
