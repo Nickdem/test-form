@@ -41,8 +41,8 @@ body
 
 .helper-btn
   position: fixed
+  top: $helper-indents
   right: $helper-indents
-  bottom: $helper-indents
   font-size: 24px
   width: 70px
   height: 70px
@@ -53,4 +53,9 @@ body
 @media screen and (min-width: 767px)
   body
      margin: 4rem
+  
+  .helper-btn
+    top: auto
+    bottom: $helper-indents
+    
 </style>

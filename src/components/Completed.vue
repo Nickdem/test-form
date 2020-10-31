@@ -12,7 +12,7 @@ $completed-indents: 40px
   position: absolute
   bottom: $completed-indents
   right: $completed-indents
-  width: 200px
+  width: 220px
   background-color: #ffffff
   color: #08acad
   text-align: center

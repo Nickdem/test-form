@@ -11,8 +11,8 @@ $helper-indents: 40px
 
 .helper
   position: fixed
+  top: $helper-indents
   right: $helper-indents
-  bottom: $helper-indents
   width: 200px
   padding: 1rem
   background-color: #ffffff
@@ -33,6 +33,8 @@ $helper-indents: 40px
   .helper
     width: 300px
     padding: 2rem
+    top: auto
+    bottom: $helper-indents
 
     p 
       font-size: 28px
