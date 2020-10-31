@@ -4,7 +4,7 @@
     <button v-if="!showHelper" class="helper-btn" @click="helperShow('Обязательные поля обозначены - *')">
       ?
     </button>
-    <Helper v-if="showHelper" :show="showHelper" :text="textHelper" @closed="helperShow" />
+    <Helper v-if="showHelper" :text="textHelper" @closed="helperShow" />
   </main>
 </template>
 

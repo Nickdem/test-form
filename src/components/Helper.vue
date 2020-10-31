@@ -1,5 +1,5 @@
 <template>
-  <div class="helper" :class="{'slideLeft': !showHelper}">
+  <div class="helper slideLeft">
     <p>{{text}}</p>
     <button @click="$emit('closed')">Закрыть</button>
   </div>
@@ -10,9 +10,6 @@ export default {
   props: {
     text: {
       type: String
-    },
-    show: {
-      type: Boolean
     }
   }
 }

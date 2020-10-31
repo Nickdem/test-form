@@ -69,7 +69,6 @@ const mixin = {
   methods: {
     submitHandler () {
       if (this.$v.$invalid) {
-          console.log(this.$v)
           this.$v.$touch()
           this.counter = 0
           this.$emit('helper', 'Проверьте все поля формы')
