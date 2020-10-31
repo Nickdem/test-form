@@ -1,10 +1,19 @@
 <template>
   <div class="helper">
-    <p>Обязательные поля обозначены - *</p>
-    <p>Проверьте все поля формы</p>
+    <p>{{text}}</p>
     <button @click="$emit('closed')">Закрыть</button>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    text: {
+      type: String
+    }
+  }
+}
+</script>
 
 <style lang="sass">
 $helper-indents: 40px

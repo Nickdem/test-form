@@ -1,30 +1,29 @@
 <template>
   <main>
-    <CreateClient @helper="showHelper = true" @completed="showCompleted = true" />
-    <button class="helper-btn" @click="helperShow">
+    <CreateClient @helper="helperShow" />
+    <button class="helper-btn" @click="helperShow('Обязательные поля обозначены - *')">
       ?
     </button>
-    <Helper v-if="showHelper" @closed="helperShow" />
-    <Completed v-if="showCompleted" @closed="showCompleted = false" />
+    <Helper v-if="showHelper" :text="textHelper" @closed="helperShow" />
   </main>
 </template>
 
 <script>
 import CreateClient from '@/components/CreateClient'
 import Helper from '@/components/Helper'
-import Completed from '@/components/Completed'
 
 export default {
   name: 'App',
   data: () => ({
     showHelper: false,
-    showCompleted: false
+    textHelper: ''
   }),
   components: {
-    CreateClient, Helper, Completed
+    CreateClient, Helper
   },
   methods: {
-    helperShow () {
+    helperShow (value) {   
+      this.textHelper = value
       this.showHelper = !this.showHelper
     }
   }

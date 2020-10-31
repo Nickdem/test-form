@@ -77,7 +77,7 @@ const mixin = {
           console.log(this.$v)
           this.$v.$touch()
           this.counter = 0
-          this.$emit('helper')
+          this.$emit('helper', 'Проверьте все поля формы')
           return
       }
 
@@ -88,7 +88,7 @@ const mixin = {
       }
 
       console.log(formData)
-      this.$emit('completed')
+      this.$emit('helper', 'Поздравляем, вы успешно зарегестрировались!')
       this.$v.$reset()
 
       this.obj1.surname = this.obj1.name = this.obj1.patronymic = this.obj1.dob = this.obj1.dob = this.obj1.gender = this.obj1.doctor =  ''
